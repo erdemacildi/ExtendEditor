@@ -10,7 +10,7 @@ void UQuickAssetAction::DuplicateAssets(int32 NumOfDuplicates)
 {
 	if (NumOfDuplicates <= 0)
 	{
-		Print(TEXT("Pleasse Enter a VALID Number"), FColor::Red);
+		ShowMsgDialog(EAppMsgType::Ok, TEXT("Please enter a VALID number"));
 		return;
 	}
 
@@ -22,11 +22,8 @@ void UQuickAssetAction::DuplicateAssets(int32 NumOfDuplicates)
 		for (int32 i = 0; i<NumOfDuplicates; i++)
 		{
 			const FString SourceAssetPath = SelectedAssetData.ObjectPath.ToString();
-			//PrintLog(TEXT("Source Path : ")+SourceAssetPath);
 			const FString NewDuplicatedAssetName = SelectedAssetData.AssetName.ToString() + TEXT("_") + FString::FromInt(i+1);
-			//PrintLog(TEXT("New Duplicated Asset Name : ")+NewDuplicatedAssetName);
 			const FString NewPathName = FPaths::Combine(SelectedAssetData.PackagePath.ToString(),NewDuplicatedAssetName);
-			//PrintLog(TEXT("New Path Name : ")+NewPathName);
 
 			if (UEditorAssetLibrary::DuplicateAsset(SourceAssetPath,NewPathName))
 			{
@@ -38,6 +35,6 @@ void UQuickAssetAction::DuplicateAssets(int32 NumOfDuplicates)
 
 	if (Counter>0)
 	{
-		Print(TEXT("Successfully duplicated " + FString::FromInt(Counter) + " files"),FColor::Green);
+		ShowNotifyInfo(TEXT("Successfully duplicated " + FString::FromInt(Counter) + " files"));
 	}
 }
