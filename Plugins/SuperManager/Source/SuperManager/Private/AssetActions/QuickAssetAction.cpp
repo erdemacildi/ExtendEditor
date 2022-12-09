@@ -3,12 +3,12 @@
 
 #include "AssetActions/QuickAssetAction.h"
 
-#include "AssetToolsModule.h"
 #include "DebugHeader.h"
 #include "EditorUtilityLibrary.h"
 #include "EditorAssetLibrary.h"
 #include "ObjectTools.h"
 #include "AssetRegistry/AssetRegistryModule.h"
+#include "AssetToolsModule.h"
 
 void UQuickAssetAction::DuplicateAssets(int32 NumOfDuplicates)
 {
