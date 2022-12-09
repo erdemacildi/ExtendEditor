@@ -1,0 +1,12 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\capoom\\unrealengineprojects\\ue_5.0\\tutorial\\extendeditor\\plugins\\developer\\riderlink\\source\\rd\\thirdparty\\thirdparty.cpp",
+        "ProvidedModule": "",
+        "Includes": [
+            "c:\\users\\capoom\\unrealengineprojects\\ue_5.0\\tutorial\\extendeditor\\plugins\\developer\\riderlink\\intermediate\\build\\win64\\unrealeditor\\development\\rd\\definitions.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}
