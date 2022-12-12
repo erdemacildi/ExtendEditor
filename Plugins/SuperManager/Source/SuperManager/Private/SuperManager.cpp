@@ -132,7 +132,55 @@ void FSuperManagerModule::OnDeleteUnusedAssetButtonClicked()
 
 void FSuperManagerModule::OnDeleteEmptyFoldersButtonClicked()
 {
-	DebugHeader::ShowMsgDialog(EAppMsgType::Ok, TEXT("It works..."),false);
+	FixUpRedirectors();
+	
+	TArray<FString> FolderPathsArray = UEditorAssetLibrary::ListAssets(FolderPathsSelected[0],true,true);
+	uint32 Counter = 0;
+
+	FString EmptyFolderPathsNames;
+	TArray<FString> EmptyFoldersPathsArray;
+
+	for (const FString& FolderPath : FolderPathsArray)
+	{
+		//Don't touch root folders
+		if (FolderPath.Contains(TEXT("Developers")) ||
+			FolderPath.Contains(TEXT("Collections")))
+		{
+			continue;
+		}
+
+		if (!UEditorAssetLibrary::DoesDirectoryExist(FolderPath)) continue;
+
+		if (!UEditorAssetLibrary::DoesDirectoryHaveAssets(FolderPath))
+		{
+			EmptyFolderPathsNames.Append(FolderPath);
+			EmptyFolderPathsNames.Append(TEXT("\n"));
+
+			EmptyFoldersPathsArray.Add(FolderPath);
+		}
+	}
+
+	if (EmptyFoldersPathsArray.Num()==0)
+	{
+		DebugHeader::ShowMsgDialog(EAppMsgType::Ok,TEXT("Noempty folder found under selected folder"),false);
+		return;
+	}
+
+	EAppReturnType::Type ConfirmResult = DebugHeader::ShowMsgDialog(EAppMsgType::OkCancel,
+		TEXT("Empty folders found in :\n")+EmptyFolderPathsNames+TEXT("\nWould you like to deleteall?"),false);
+
+	if (ConfirmResult == EAppReturnType::Cancel) return;
+
+	for (const FString& EmptyFolderPath:EmptyFoldersPathsArray)
+	{
+		UEditorAssetLibrary::DeleteDirectory(EmptyFolderPath)?
+			++Counter : DebugHeader::Print(TEXT("Failed to delete "+ EmptyFolderPath) , FColor::Red);
+	}
+
+	if (Counter > 0)
+	{
+		DebugHeader::ShowNotifyInfo(TEXT("Successfullydeleted ") + FString::FromInt(Counter) + TEXT(" folders."));
+	}
 }
 
 void FSuperManagerModule::FixUpRedirectors()
