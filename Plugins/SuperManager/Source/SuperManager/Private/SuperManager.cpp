@@ -6,6 +6,8 @@
 #include "DebugHeader.h"
 #include "EditorAssetLibrary.h"
 #include "ObjectTools.h"
+#include "AssetRegistry/AssetRegistryModule.h"
+#include "AssetToolsModule.h"
 
 #define LOCTEXT_NAMESPACE "FSuperManagerModule"
 
@@ -22,6 +24,7 @@ void FSuperManagerModule::InitCBMenuExtention()
 	//for adding content browser module 
 	FContentBrowserModule& ContentBrowserModule = FModuleManager::LoadModuleChecked<FContentBrowserModule>(TEXT("ContentBrowser"));
 
+	//Get hold of all the menu extenders
 	TArray<FContentBrowserMenuExtender_SelectedPaths>& ContentBrowserModuleMenuExtenders = ContentBrowserModule.GetAllPathViewContextMenuExtenders();
 
 	/*FContentBrowserMenuExtender_SelectedPaths CustomCBMenuDelegate;
@@ -62,7 +65,7 @@ void FSuperManagerModule::OnDeleteUnusedAssetButtonClicked()
 {
 	if (FolderPathsSelected.Num()>1)
 	{
-		DebugHeader::ShowMsgDialog(EAppMsgType::Ok, TEXT("You can only dothis to one folder"));
+		DebugHeader::ShowMsgDialog(EAppMsgType::Ok, TEXT("You can only do this to one folder"));
 		return;
 	}
 
@@ -79,6 +82,7 @@ void FSuperManagerModule::OnDeleteUnusedAssetButtonClicked()
 
 	if (ConfirmResult == EAppReturnType::No) return;
 
+	FixUpRedirectors();
 	TArray<FAssetData> UnusedAssetsDataArray;
 
 	for (const FString& AssetPathName:AssetsPathNames)
@@ -110,6 +114,34 @@ void FSuperManagerModule::OnDeleteUnusedAssetButtonClicked()
 	{
 		DebugHeader::ShowMsgDialog(EAppMsgType::Ok, TEXT("No unused asset found under selected folder"));
 	}
+}
+
+void FSuperManagerModule::FixUpRedirectors()
+{
+	TArray<UObjectRedirector*> RedirectorsToFixArray;
+
+	FAssetRegistryModule& AssetRegistryModule = FModuleManager::Get().LoadModuleChecked<FAssetRegistryModule>(TEXT("AssetRegistry"));
+
+	FARFilter Filter;
+	Filter.bRecursivePaths = true;
+	Filter.PackagePaths.Emplace("/Game");
+	Filter.ClassNames.Emplace("ObjectRedirector");
+
+	TArray<FAssetData> OutRedirectors;
+
+	AssetRegistryModule.Get().GetAssets(Filter,OutRedirectors);
+
+	for (const FAssetData& RedirectorData : OutRedirectors)
+	{
+		if (UObjectRedirector* RedirectorToFix = Cast<UObjectRedirector>(RedirectorData.GetAsset()))
+		{
+			RedirectorsToFixArray.Add(RedirectorToFix);
+		}
+	}
+
+	FAssetToolsModule& AssetToolsModule = FModuleManager::LoadModuleChecked<FAssetToolsModule>(TEXT("AssetTools"));
+
+	AssetToolsModule.Get().FixupReferencers(RedirectorsToFixArray);
 }
 
 #pragma endregion 
