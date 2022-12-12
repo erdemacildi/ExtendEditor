@@ -29,5 +29,7 @@ private:
 
 	void FixUpRedirectors();
 
+	void OnDeleteEmptyFoldersButtonClicked();
+
 #pragma endregion 
 };

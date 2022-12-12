@@ -32,19 +32,21 @@ void FSuperManagerModule::InitCBMenuExtention()
 	
 	ContentBrowserModuleMenuExtenders.Add(CustomCBMenuDelegate);*/
 
+	//We add custom delegate toall the existing delegates
 	ContentBrowserModuleMenuExtenders.Add(FContentBrowserMenuExtender_SelectedPaths::CreateRaw(this,&FSuperManagerModule::CustomCBMenuExtender));
 }
 
+//To define the position for inserting menu entry
 TSharedRef<FExtender> FSuperManagerModule::CustomCBMenuExtender(const TArray<FString>& SelectedPaths)
 {
 	TSharedRef<FExtender> MenuExtender (new FExtender());
 
 	if (SelectedPaths.Num()>0)
 	{
-		MenuExtender->AddMenuExtension(FName("Delete"),
-			EExtensionHook::After,
-			TSharedPtr<FUICommandList>(),
-			FMenuExtensionDelegate::CreateRaw(this,&FSuperManagerModule::AddCBMenuEntry));
+		MenuExtender->AddMenuExtension(FName("Delete"), //Extention hook, position insert
+			EExtensionHook::After, //Inserting before or after
+			TSharedPtr<FUICommandList>(), //Custom hot keys
+			FMenuExtensionDelegate::CreateRaw(this,&FSuperManagerModule::AddCBMenuEntry)); //Second binding, will define details for this menu entry
 
 		FolderPathsSelected = SelectedPaths;
 	}
@@ -52,37 +54,49 @@ TSharedRef<FExtender> FSuperManagerModule::CustomCBMenuExtender(const TArray<FSt
 	return MenuExtender;
 }
 
+//Define details for the custom menu entry
 void FSuperManagerModule::AddCBMenuEntry(FMenuBuilder& MenuBuilder)
 {
 	MenuBuilder.AddMenuEntry(
-		FText::FromString(TEXT("Delete Unused Assets")),
-		FText::FromString(TEXT("Safely delete all unused assets under folder")),
-		FSlateIcon(),
-		FExecuteAction::CreateRaw(this,&FSuperManagerModule::OnDeleteUnusedAssetButtonClicked));
+		FText::FromString(TEXT("Delete Unused Assets")), //Title text for menu entry
+		FText::FromString(TEXT("Safely delete all unused assets under folders")), //Tooltip text
+		FSlateIcon(), //Custom icon
+		FExecuteAction::CreateRaw(this,&FSuperManagerModule::OnDeleteUnusedAssetButtonClicked)); //The actual function to execute
+
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Delete Empty Folders")), //Title text for menu entry
+		FText::FromString(TEXT("Safely delete all empty folders")), //Tooltip text
+		FSlateIcon(), //Custom icon
+		FExecuteAction::CreateRaw(this,&FSuperManagerModule::OnDeleteEmptyFoldersButtonClicked)); //The actual function to execute
 }
+
 
 void FSuperManagerModule::OnDeleteUnusedAssetButtonClicked()
 {
+	//Must select one folder
 	if (FolderPathsSelected.Num()>1)
 	{
 		DebugHeader::ShowMsgDialog(EAppMsgType::Ok, TEXT("You can only do this to one folder"));
 		return;
 	}
 
+	//Selects all assets in this folder recursively (Contains sub folders)
 	TArray<FString> AssetsPathNames = UEditorAssetLibrary::ListAssets(FolderPathsSelected[0]);
 
+	//Whether there are assets under the folder
 	if (AssetsPathNames.Num()==0)
 	{
-		DebugHeader::ShowMsgDialog(EAppMsgType::Ok, TEXT("No asset found under selected folder"));
+		DebugHeader::ShowMsgDialog(EAppMsgType::Ok, TEXT("No asset found under selected folder"),false);
 		return;
 	}
 
 	EAppReturnType::Type ConfirmResult =
-		DebugHeader::ShowMsgDialog(EAppMsgType::YesNo,TEXT("A total of ") + FString::FromInt(AssetsPathNames.Num()) + TEXT(" found.\nWould you like to proceed?"));
+		DebugHeader::ShowMsgDialog(EAppMsgType::YesNo,TEXT("A total of ") + FString::FromInt(AssetsPathNames.Num()) + TEXT(" assets need to be checked.\nWould you like to proceed?"),false);
 
 	if (ConfirmResult == EAppReturnType::No) return;
 
 	FixUpRedirectors();
+	
 	TArray<FAssetData> UnusedAssetsDataArray;
 
 	for (const FString& AssetPathName:AssetsPathNames)
@@ -112,8 +126,13 @@ void FSuperManagerModule::OnDeleteUnusedAssetButtonClicked()
 	}
 	else
 	{
-		DebugHeader::ShowMsgDialog(EAppMsgType::Ok, TEXT("No unused asset found under selected folder"));
+		DebugHeader::ShowMsgDialog(EAppMsgType::Ok, TEXT("No unused asset found under selected folder"),false);
 	}
+}
+
+void FSuperManagerModule::OnDeleteEmptyFoldersButtonClicked()
+{
+	DebugHeader::ShowMsgDialog(EAppMsgType::Ok, TEXT("It works..."),false);
 }
 
 void FSuperManagerModule::FixUpRedirectors()
