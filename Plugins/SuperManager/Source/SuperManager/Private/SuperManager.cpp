@@ -56,7 +56,18 @@ TSharedRef<FExtender> FSuperManagerModule::CustomCBMenuExtender(const TArray<FSt
 
 //Define details for the custom menu entry
 void FSuperManagerModule::AddCBMenuEntry(FMenuBuilder& MenuBuilder)
-{
+{ 
+	/*MenuBuilder.AddSubMenu(
+		FText::FromString(TEXT("Delete U")),
+		FText::FromString(TEXT("Safely delete all unused assets under folders")),
+		MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Delete Unused Assets")), //Title text for menu entry
+		FText::FromString(TEXT("Safely delete all unused assets under folders")), //Tooltip text
+		FSlateIcon(), //Custom icon
+		FExecuteAction::CreateRaw(this,&FSuperManagerModule::OnDeleteUnusedAssetButtonClicked)),
+		
+		);*/
+	
 	MenuBuilder.AddMenuEntry(
 		FText::FromString(TEXT("Delete Unused Assets")), //Title text for menu entry
 		FText::FromString(TEXT("Safely delete all unused assets under folders")), //Tooltip text
@@ -68,8 +79,20 @@ void FSuperManagerModule::AddCBMenuEntry(FMenuBuilder& MenuBuilder)
 		FText::FromString(TEXT("Safely delete all empty folders")), //Tooltip text
 		FSlateIcon(), //Custom icon
 		FExecuteAction::CreateRaw(this,&FSuperManagerModule::OnDeleteEmptyFoldersButtonClicked)); //The actual function to execute
-}
 
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Delete Empty Folders and Unused Assets")), //Title text for menu entry
+		FText::FromString(TEXT("Safely delete all empty folders and unused assets")), //Tooltip text
+		FSlateIcon(), //Custom icon
+		FExecuteAction::CreateRaw(this,&FSuperManagerModule::OnDeleteEmptyFoldersAndUnusedAssetsButtonClicked)); //The actual function to execute
+
+	MenuBuilder.AddMenuEntry(
+		FText::FromString(TEXT("Advance Deltion")), //Title text for menu entry
+		FText::FromString(TEXT("List assets by specific condition in a tab for deleting")), //Tooltip text
+		FSlateIcon(), //Custom icon
+		FExecuteAction::CreateRaw(this,&FSuperManagerModule::OnAdvanceDeletionButtonClicked)); //The actual function to execute
+	
+}
 
 void FSuperManagerModule::OnDeleteUnusedAssetButtonClicked()
 {
@@ -181,6 +204,20 @@ void FSuperManagerModule::OnDeleteEmptyFoldersButtonClicked()
 	{
 		DebugHeader::ShowNotifyInfo(TEXT("Successfullydeleted ") + FString::FromInt(Counter) + TEXT(" folders."));
 	}
+
+	
+}
+
+void FSuperManagerModule::OnDeleteEmptyFoldersAndUnusedAssetsButtonClicked()
+{
+	OnDeleteUnusedAssetButtonClicked();
+
+	OnDeleteEmptyFoldersButtonClicked();
+}
+
+void FSuperManagerModule::OnAdvanceDeletionButtonClicked()
+{
+	DebugHeader::Print(TEXT("Working..."),FColor::Green);
 }
 
 void FSuperManagerModule::FixUpRedirectors()

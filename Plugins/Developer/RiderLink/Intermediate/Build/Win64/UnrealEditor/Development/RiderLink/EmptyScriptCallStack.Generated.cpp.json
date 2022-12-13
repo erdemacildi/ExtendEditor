@@ -1,0 +1,12 @@
+{
+    "Version": "1.2",
+    "Data": {
+        "Source": "c:\\users\\capoom\\unrealengineprojects\\ue_5.0\\tutorial\\extendeditor\\plugins\\developer\\riderlink\\source\\riderlink\\public\\model\\library\\ue4library\\emptyscriptcallstack.generated.cpp",
+        "ProvidedModule": "",
+        "Includes": [
+            "c:\\users\\capoom\\unrealengineprojects\\ue_5.0\\tutorial\\extendeditor\\plugins\\developer\\riderlink\\intermediate\\build\\win64\\unrealeditor\\development\\riderlink\\definitions.h"
+        ],
+        "ImportedModules": [],
+        "ImportedHeaderUnits": []
+    }
+}

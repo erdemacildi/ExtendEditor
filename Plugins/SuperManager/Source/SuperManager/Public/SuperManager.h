@@ -26,10 +26,12 @@ private:
 	void AddCBMenuEntry(class FMenuBuilder& MenuBuilder);
 
 	void OnDeleteUnusedAssetButtonClicked();
+	void OnDeleteEmptyFoldersButtonClicked();
+	void OnDeleteEmptyFoldersAndUnusedAssetsButtonClicked();
+	void OnAdvanceDeletionButtonClicked();
 
 	void FixUpRedirectors();
 
-	void OnDeleteEmptyFoldersButtonClicked();
 
 #pragma endregion 
 };
