@@ -1,0 +1,17 @@
+/NOLOGO
+/errorReport:prompt
+/MACHINE:x64
+/SUBSYSTEM:WINDOWS
+/DEF
+/NAME:"UnrealEditor-RiderLink.dll"
+/IGNORE:4221
+/NODEFAULTLIB
+"C:\Users\capoom\UnrealEngineProjects\UE_5.0\Tutorial\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLink\Module.RiderLink.cpp.obj"
+"C:\Users\capoom\UnrealEngineProjects\UE_5.0\Tutorial\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLink\EmptyScriptCallStack.Generated.cpp.obj"
+"C:\Users\capoom\UnrealEngineProjects\UE_5.0\Tutorial\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLink\IScriptCallStack.Generated.cpp.obj"
+"C:\Users\capoom\UnrealEngineProjects\UE_5.0\Tutorial\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLink\IScriptCallStack_Unknown.Generated.cpp.obj"
+"C:\Users\capoom\UnrealEngineProjects\UE_5.0\Tutorial\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLink\IScriptMsg.Generated.cpp.obj"
+"C:\Users\capoom\UnrealEngineProjects\UE_5.0\Tutorial\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLink\IScriptMsg_Unknown.Generated.cpp.obj"
+"C:\Users\capoom\UnrealEngineProjects\UE_5.0\Tutorial\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLink\LogMessageInfo.Generated.cpp.obj"
+"C:\Users\capoom\UnrealEngineProjects\UE_5.0\Tutorial\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLink\Default.rc2.res"
+/OUT:"C:\Users\capoom\UnrealEngineProjects\UE_5.0\Tutorial\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLink\UnrealEditor-RiderLink.lib"
