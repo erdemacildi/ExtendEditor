@@ -15,6 +15,8 @@ void FSuperManagerModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
 	InitCBMenuExtention();
+
+	RegisterAdvanceDeletionTab();
 }
 
 #pragma region ContentBrowserMenuExtention
@@ -217,7 +219,7 @@ void FSuperManagerModule::OnDeleteEmptyFoldersAndUnusedAssetsButtonClicked()
 
 void FSuperManagerModule::OnAdvanceDeletionButtonClicked()
 {
-	DebugHeader::Print(TEXT("Working..."),FColor::Green);
+	FGlobalTabmanager::Get()->TryInvokeTab(FName("AdvanceDeletion"));
 }
 
 void FSuperManagerModule::FixUpRedirectors()
@@ -248,7 +250,22 @@ void FSuperManagerModule::FixUpRedirectors()
 	AssetToolsModule.Get().FixupReferencers(RedirectorsToFixArray);
 }
 
-#pragma endregion 
+#pragma endregion
+
+#pragma region CustomEditorTab
+
+void FSuperManagerModule::RegisterAdvanceDeletionTab()
+{
+	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(FName("AdvanceDeletion"),
+		FOnSpawnTab::CreateRaw(this,&FSuperManagerModule::OnSpawnAdvanceDeletionTab)).SetDisplayName(FText::FromString(TEXT("Advance Deletion")));
+}
+
+TSharedRef<SDockTab> FSuperManagerModule::OnSpawnAdvanceDeletionTab(const FSpawnTabArgs& aaa)
+{
+	return SNew(SDockTab).TabRole(ETabRole::NomadTab);
+}
+
+#pragma endregion
 
 void FSuperManagerModule::ShutdownModule()
 {
