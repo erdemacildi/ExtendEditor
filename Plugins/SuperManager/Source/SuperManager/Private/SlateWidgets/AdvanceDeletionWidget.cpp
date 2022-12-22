@@ -6,6 +6,7 @@
 #include "Widgets/Layout/SScrollBox.h"
 #include "SlateBasics.h"
 #include "DebugHeader.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 {
@@ -13,14 +14,14 @@ void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 
 	StoredAssetsData = InArgs._AssetsDataToStore;
 
-	FSlateFontInfo TitleTextFont = FCoreStyle::Get().GetFontStyle(FName("EmbossedText"));
+	FSlateFontInfo TitleTextFont = GetEmbossedTextFont();
 	TitleTextFont.Size = 30;
 
 	FSlateFontInfo TitleTextFont2 = FCoreStyle::Get().GetFontStyle(FName("EmbossedText"));
 	TitleTextFont.Size = 24;
 
-	FSlateFontInfo TitleTextFont3 = FCoreStyle::Get().GetFontStyle(FName("EmbossedText"));
-	TitleTextFont.Size = 45;
+	/*FSlateFontInfo TitleTextFont3 = FCoreStyle::Get().GetFontStyle(FName("EmbossedText"));
+	TitleTextFont.Size = 45;*/
 
 	ChildSlot
 	[   //Main Vertical Box
@@ -71,11 +72,18 @@ void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 TSharedRef<ITableRow> SAdvanceDeletionTab::OnGenerateRowForList(TSharedPtr<FAssetData> AssetDataToDisplay, const TSharedRef<STableViewBase>& OwnerTable)
 {
 	if (!AssetDataToDisplay.IsValid()) return SNew(STableRow<TSharedPtr<FAssetData>>,OwnerTable);
-	
+
+	const FString DisplayAssetClassName = AssetDataToDisplay->AssetClass.ToString();
 	const FString DisplayAssetName = AssetDataToDisplay->AssetName.ToString();
+
+	FSlateFontInfo AssetClassNameFont = GetEmbossedTextFont();
+	AssetClassNameFont.Size = 10;
+
+	FSlateFontInfo AssetNameFont = GetEmbossedTextFont();
+	AssetNameFont.Size = 15;
 	
 	TSharedRef<STableRow<TSharedPtr<FAssetData>>> ListViewRowWidget = 
-		SNew(STableRow<TSharedPtr<FAssetData>>,OwnerTable)[
+		SNew(STableRow<TSharedPtr<FAssetData>>,OwnerTable).Padding(FMargin(5.f))[
 			SNew(SHorizontalBox)
 
 			//First slot for check box
@@ -87,13 +95,25 @@ TSharedRef<ITableRow> SAdvanceDeletionTab::OnGenerateRowForList(TSharedPtr<FAsse
 			]
 
 			//Second slot for displaying asset class name
+			+SHorizontalBox::Slot()
+			.HAlign(HAlign_Center)
+			.VAlign(VAlign_Fill)
+			.FillWidth(0.5f)[
+				ConstructTextForRowWidget(DisplayAssetClassName, AssetClassNameFont)
+			]
 
 			//Third slot for displaying asset name
-			+SHorizontalBox::Slot()[
-				SNew(STextBlock)
-				.Text(FText::FromString(DisplayAssetName))
+			+SHorizontalBox::Slot()
+			.HAlign(HAlign_Left)
+			.VAlign(VAlign_Fill)[
+				ConstructTextForRowWidget(DisplayAssetName, AssetNameFont)
 			]
 			//Fourth slot for a button
+			+SHorizontalBox::Slot()
+			.HAlign(HAlign_Right)
+			.VAlign(VAlign_Fill)[
+				ConstructButtonForRowWidget(AssetDataToDisplay)
+			]
 	
 		];
 	return ListViewRowWidget;
@@ -132,4 +152,29 @@ void SAdvanceDeletionTab::OnCheckBoxStateChanged(ECheckBoxState NewState, TShare
 	
 }
 
+TSharedRef<STextBlock> SAdvanceDeletionTab::ConstructTextForRowWidget(const FString& TextContent, const FSlateFontInfo& FontToUse)
+{
+	TSharedRef<STextBlock> ConstructedTextBlock = 
+	SNew(STextBlock)
+	.Text(FText::FromString(TextContent))
+	.Font(FontToUse)
+	.ColorAndOpacity(FColor::White);
 
+	return ConstructedTextBlock;
+}
+
+TSharedRef<SButton> SAdvanceDeletionTab::ConstructButtonForRowWidget(const TSharedPtr<FAssetData>& AssetDataToDisplay)
+{
+	TSharedRef<SButton> ConstructedButton =
+	SNew(SButton)
+	.Text(FText::FromString(TEXT("Delete")))
+	.OnClicked(this,&SAdvanceDeletionTab::OnDeleteButtonClicked,AssetDataToDisplay);
+
+	return ConstructedButton;
+}
+
+FReply SAdvanceDeletionTab::OnDeleteButtonClicked(TSharedPtr<FAssetData> ClickedAssetData)
+{
+	DebugHeader::Print(ClickedAssetData->AssetName.ToString() + TEXT(" is clicked"),FColor::Green);
+	return FReply::Handled();
+}
