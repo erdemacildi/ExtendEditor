@@ -5,6 +5,7 @@
 
 #include "Widgets/Layout/SScrollBox.h"
 #include "SlateBasics.h"
+#include "DebugHeader.h"
 
 void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 {
@@ -47,7 +48,7 @@ void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 
 		//Third slot for the actual asset list
 		+SVerticalBox::Slot()
-		.AutoHeight()[
+		.VAlign(VAlign_Fill)[
 			SNew(SScrollBox)
 
 			+SScrollBox::Slot()[
@@ -69,10 +70,66 @@ void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 
 TSharedRef<ITableRow> SAdvanceDeletionTab::OnGenerateRowForList(TSharedPtr<FAssetData> AssetDataToDisplay, const TSharedRef<STableViewBase>& OwnerTable)
 {
+	if (!AssetDataToDisplay.IsValid()) return SNew(STableRow<TSharedPtr<FAssetData>>,OwnerTable);
+	
 	const FString DisplayAssetName = AssetDataToDisplay->AssetName.ToString();
+	
 	TSharedRef<STableRow<TSharedPtr<FAssetData>>> ListViewRowWidget = 
-	SNew(STableRow<TSharedPtr<FAssetData>>,OwnerTable)[
-		SNew(STextBlock)
-		.Text(FText::FromString(DisplayAssetName))];
+		SNew(STableRow<TSharedPtr<FAssetData>>,OwnerTable)[
+			SNew(SHorizontalBox)
+
+			//First slot for check box
+			+SHorizontalBox::Slot()
+			.HAlign(HAlign_Left)
+			.VAlign(VAlign_Center)
+			.FillWidth(.05f)[
+				ConstructCheckBox(AssetDataToDisplay)
+			]
+
+			//Second slot for displaying asset class name
+
+			//Third slot for displaying asset name
+			+SHorizontalBox::Slot()[
+				SNew(STextBlock)
+				.Text(FText::FromString(DisplayAssetName))
+			]
+			//Fourth slot for a button
+	
+		];
 	return ListViewRowWidget;
 }
+
+TSharedRef<SCheckBox> SAdvanceDeletionTab::ConstructCheckBox(const TSharedPtr<FAssetData>& AssetDataToDisplay)
+{
+	TSharedRef<SCheckBox> ConstructedCheckBox =
+	SNew(SCheckBox)
+	.Type(ESlateCheckBoxType::CheckBox)
+	.OnCheckStateChanged(this,&SAdvanceDeletionTab::OnCheckBoxStateChanged,AssetDataToDisplay)
+	.Visibility(EVisibility::Visible);
+
+	return ConstructedCheckBox;
+}
+
+void SAdvanceDeletionTab::OnCheckBoxStateChanged(ECheckBoxState NewState, TSharedPtr<FAssetData> AssetData)
+{
+	switch (NewState)
+	{
+	case ECheckBoxState::Unchecked:
+		DebugHeader::Print(AssetData->AssetName.ToString() + TEXT(" is unchecked"),FColor::Red);
+		break;
+		
+	case ECheckBoxState::Checked:
+		DebugHeader::Print(AssetData->AssetName.ToString() + TEXT(" is checked"),FColor::Green);
+		break;
+		
+	case ECheckBoxState::Undetermined:
+		
+		break;
+		
+	default:
+		break;		
+	}
+	
+}
+
+
