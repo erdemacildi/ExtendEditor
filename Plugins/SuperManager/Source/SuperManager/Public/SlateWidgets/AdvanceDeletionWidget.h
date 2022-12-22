@@ -4,13 +4,21 @@
 
 #include "Widgets/SCompoundWidget.h"
 
+
 class SAdvanceDeletionTab : public SCompoundWidget
 {
 	SLATE_BEGIN_ARGS(SAdvanceDeletionTab){}
-
+	
+	SLATE_ARGUMENT(TArray<TSharedPtr<FAssetData>>,AssetsDataToStore)
+	
 	SLATE_END_ARGS()
 
 public:
-	void Constract(const FArguments& InArgs);
+	void Construct(const FArguments& InArgs);
+
+private:
+	TArray<TSharedPtr<FAssetData>> StoredAssetsData;
+
+	TSharedRef<ITableRow> OnGenerateRowForList (TSharedPtr<FAssetData> AssetDataToDisplay, const TSharedRef<STableViewBase>& OwnerTable);
 	
 };
