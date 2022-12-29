@@ -53,11 +53,7 @@ void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 			SNew(SScrollBox)
 
 			+SScrollBox::Slot()[
-				SNew(SListView<TSharedPtr<FAssetData>>)
-				.ItemHeight(24.f)
-				.ListItemsSource(&StoredAssetsData)
-				.OnGenerateRow(this,
-					&SAdvanceDeletionTab::OnGenerateRowForList)
+				ConstructAssetListView()
 				]
 		]
 
@@ -65,9 +61,48 @@ void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 		+SVerticalBox::Slot()
 		.AutoHeight()[
 			SNew(SHorizontalBox)
+
+			+SHorizontalBox::Slot()
+			.FillWidth(10.f)
+			.Padding(5.f)[
+				ConstructDeleteAllButton()	
+			]
+
+			+SHorizontalBox::Slot()
+			.FillWidth(10.f)
+			.Padding(5.f)[
+				ConstructSelectAllButton()
+			]
+
+			+SHorizontalBox::Slot()
+			.FillWidth(10.f)
+			.Padding(5.f)[
+				ConstructDeselectAllButton()
+			]
 		]
 	];
 }
+
+TSharedRef<SListView<TSharedPtr<FAssetData>>> SAdvanceDeletionTab::ConstructAssetListView()
+{
+	ConstructedAssetListView = SNew(SListView<TSharedPtr<FAssetData>>)
+				.ItemHeight(24.f)
+				.ListItemsSource(&StoredAssetsData)
+				.OnGenerateRow(this,
+					&SAdvanceDeletionTab::OnGenerateRowForList);
+
+	return ConstructedAssetListView.ToSharedRef();
+}
+
+void SAdvanceDeletionTab::RefreshAssetListView()
+{
+	if (ConstructedAssetListView.IsValid())
+	{
+		ConstructedAssetListView->RebuildList();
+	}
+}
+
+#pragma region RowWidgetForAssetListView
 
 TSharedRef<ITableRow> SAdvanceDeletionTab::OnGenerateRowForList(TSharedPtr<FAssetData> AssetDataToDisplay, const TSharedRef<STableViewBase>& OwnerTable)
 {
@@ -182,8 +217,79 @@ FReply SAdvanceDeletionTab::OnDeleteButtonClicked(TSharedPtr<FAssetData> Clicked
 
 	if (bAssetDeleted)
 	{
-		//Refresh the List
+		//Updating the list source items
+		if(StoredAssetsData.Contains(ClickedAssetData))
+		{
+			StoredAssetsData.Remove(ClickedAssetData);
+		}
+		//Refresh the list
+		RefreshAssetListView();
 	}
 
 	return FReply::Handled();
 }
+
+TSharedRef<SButton> SAdvanceDeletionTab::ConstructDeleteAllButton()
+{
+	TSharedRef<SButton> DeleteAllButton = SNew(SButton)
+	.ContentPadding(FMargin(5.f))
+	.OnClicked(this,&SAdvanceDeletionTab::OnDeleteAllButtonClicked);
+
+	DeleteAllButton->SetContent(ConstructTextForTabButtons(TEXT("Delete All")));
+
+	return DeleteAllButton;
+}
+
+FReply SAdvanceDeletionTab::OnDeleteAllButtonClicked()
+{
+	DebugHeader::Print(TEXT("Delete All Button Clicked"),FColor::Cyan);
+	return FReply::Handled();
+}
+
+TSharedRef<SButton> SAdvanceDeletionTab::ConstructSelectAllButton()
+{
+	TSharedRef<SButton> SelectAllButton = SNew(SButton)
+	.ContentPadding(FMargin(5.f))
+	.OnClicked(this,&SAdvanceDeletionTab::OnSelectAllButtonClicked);
+
+	SelectAllButton->SetContent(ConstructTextForTabButtons(TEXT("Select All")));
+
+	return SelectAllButton;
+}
+
+FReply SAdvanceDeletionTab::OnSelectAllButtonClicked()
+{
+	DebugHeader::Print(TEXT("Select All Button Clicked"),FColor::Cyan);
+	return FReply::Handled();
+}
+
+TSharedRef<SButton> SAdvanceDeletionTab::ConstructDeselectAllButton()
+{
+	TSharedRef<SButton> DeselectAllButton = SNew(SButton)
+	.ContentPadding(FMargin(5.f))
+	.OnClicked(this,&SAdvanceDeletionTab::OnDeselectAllButtonClicked);
+
+	DeselectAllButton->SetContent(ConstructTextForTabButtons(TEXT("Deselect All")));
+
+	return DeselectAllButton;
+}
+
+FReply SAdvanceDeletionTab::OnDeselectAllButtonClicked()
+{
+	DebugHeader::Print(TEXT("Deselect All Button Clicked"),FColor::Cyan);
+	return FReply::Handled();
+}
+
+TSharedRef<STextBlock> SAdvanceDeletionTab::ConstructTextForTabButtons(const FString& TextContent)
+{
+	FSlateFontInfo ButtonTextFont = GetEmbossedTextFont();
+	ButtonTextFont.Size = 15;
+	TSharedRef<STextBlock> ConstructedTextBlock = SNew(STextBlock)
+	.Text(FText::FromString(TextContent))
+	.Font(ButtonTextFont)
+	.Justification(ETextJustify::Center);
+
+	return ConstructedTextBlock;
+}
+
+#pragma endregion
