@@ -273,6 +273,7 @@ TArray<TSharedPtr<FAssetData>> FSuperManagerModule::GetAllAssetDataUnderSelected
 {
 	TArray<TSharedPtr<FAssetData>> AvaiableAssetsData;
 
+	//FolderPathsSelected.Add(TEXT(""));
 	TArray<FString> AssetsPathNames = UEditorAssetLibrary::ListAssets(FolderPathsSelected[0]);
 
 	for (const FString& AssetPathName:AssetsPathNames)
@@ -295,6 +296,24 @@ TArray<TSharedPtr<FAssetData>> FSuperManagerModule::GetAllAssetDataUnderSelected
 }
 
 #pragma endregion
+
+#pragma region ProccessDataForAdvanceDeletionTab
+
+bool FSuperManagerModule::DeleteSingleAssetForAssetList(const FAssetData& AssetDataToDelete)
+{
+	TArray<FAssetData> AssetDataForDeletion;
+	AssetDataForDeletion.Add(AssetDataToDelete);
+
+	if (ObjectTools::DeleteAssets(AssetDataForDeletion)>0)
+	{
+		return true;
+	}
+
+	return false;
+	
+}
+
+#pragma endregion 
 
 void FSuperManagerModule::ShutdownModule()
 {
