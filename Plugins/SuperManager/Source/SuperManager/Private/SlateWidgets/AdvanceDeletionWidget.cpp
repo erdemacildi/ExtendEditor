@@ -8,22 +8,26 @@
 #include "SlateBasics.h"
 #include "DebugHeader.h"
 
+#define ListAll TEXT("List All Avaible Assets")
+
 void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 {
 	bCanSupportFocus = true;
 
 	StoredAssetsData = InArgs._AssetsDataToStore;
+	
 	CheckBoxesArray.Empty();
 	AssetsDataToDeleteArray.Empty();
 
-	FSlateFontInfo TitleTextFont = GetEmbossedTextFont();
-	TitleTextFont.Size = 30;
+	ComboBoxSourceItems.Add(MakeShared<FString>(ListAll));
 
-	FSlateFontInfo TitleTextFont2 = FCoreStyle::Get().GetFontStyle(FName("EmbossedText"));
+	FSlateFontInfo TitleTextFont = FCoreStyle::Get().GetFontStyle(FName("EmbossedText"));
 	TitleTextFont.Size = 24;
 
+	/*FSlateFontInfo TitleTextFont = GetEmbossedTextFont();
+	TitleTextFont.Size = 30;*/
 	/*FSlateFontInfo TitleTextFont3 = FCoreStyle::Get().GetFontStyle(FName("EmbossedText"));
-	TitleTextFont.Size = 45;*/
+	TitleTextFont3.Size = 45;*/
 
 	ChildSlot
 	[   //Main Vertical Box
@@ -42,11 +46,14 @@ void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 		//SecondSlot for drop down to specify the listing condition
 		+SVerticalBox::Slot()
 		.AutoHeight()[
-			SNew(STextBlock)
-				.Text(FText::FromString(TEXT("A drop down for listing condition")))
-				.Font(TitleTextFont2)
-				.Justification(ETextJustify::Left)
-				.ColorAndOpacity(FColor::White)
+			SNew(SHorizontalBox)
+
+			//Combo Box Slot
+			+SHorizontalBox::Slot()
+			.AutoWidth()[
+				
+			
+			]
 		]
 
 		//Third slot for the actual asset list
@@ -106,6 +113,28 @@ void SAdvanceDeletionTab::RefreshAssetListView()
 		ConstructedAssetListView->RebuildList();
 	}
 }
+
+#pragma region ComboBoxForListingConditions
+
+TSharedRef<SComboBox<TSharedPtr<FString>>> SAdvanceDeletionTab::ConstructComboBox()
+{
+	TSharedRef<SComboBox<TSharedPtr<FString>>> ConstructedComboBox =
+		SNew(SComboBox<TSharedPtr<FString>>)
+		.OptionsSource(&ComboBoxSourceItems)
+		.OnGenerateWidget(this,&SAdvanceDeletionTab::OnGenerateComboContent);
+
+	return ConstructedComboBox;
+}
+
+TSharedRef<SWidget> SAdvanceDeletionTab::OnGenerateComboContent(TSharedPtr<FString> SourceItem)
+{
+	TSharedRef<STextBlock> ConstructedComboText = SNew(STextBlock)
+	.Text(FText::FromString(*SourceItem.Get()));
+	
+	return ConstructedComboText;
+}
+
+#pragma endregion
 
 #pragma region RowWidgetForAssetListView
 

@@ -17,6 +17,7 @@ public:
 	void Construct(const FArguments& InArgs);
 
 private:
+	
 	TArray<TSharedPtr<FAssetData>> StoredAssetsData;
 	TArray<TSharedRef<SCheckBox>> CheckBoxesArray;
 	TArray<TSharedPtr<FAssetData>> AssetsDataToDeleteArray;
@@ -24,6 +25,16 @@ private:
 	TSharedRef<SListView<TSharedPtr<FAssetData>>> ConstructAssetListView();
 	TSharedPtr<SListView<TSharedPtr<FAssetData>>> ConstructedAssetListView;
 	void RefreshAssetListView();
+
+#pragma region ComboBoxForListingConditions
+
+	TSharedRef< SComboBox < TSharedPtr <FString>>> ConstructComboBox();
+
+	TArray<TSharedPtr<FString>> ComboBoxSourceItems;
+
+	TSharedRef<SWidget> OnGenerateComboContent(TSharedPtr<FString> SourceItem);
+
+#pragma endregion 
 
 #pragma region RowWidgetForAssetListView
 
