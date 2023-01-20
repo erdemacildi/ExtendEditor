@@ -51,8 +51,7 @@ void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 			//Combo Box Slot
 			+SHorizontalBox::Slot()
 			.AutoWidth()[
-				
-			
+				ConstructComboBox()
 			]
 		]
 
@@ -121,7 +120,12 @@ TSharedRef<SComboBox<TSharedPtr<FString>>> SAdvanceDeletionTab::ConstructComboBo
 	TSharedRef<SComboBox<TSharedPtr<FString>>> ConstructedComboBox =
 		SNew(SComboBox<TSharedPtr<FString>>)
 		.OptionsSource(&ComboBoxSourceItems)
-		.OnGenerateWidget(this,&SAdvanceDeletionTab::OnGenerateComboContent);
+		.OnGenerateWidget(this,&SAdvanceDeletionTab::OnGenerateComboContent)
+		.OnSelectionChanged(this,&SAdvanceDeletionTab::OnComboSelectionChanged)
+		[
+			SAssignNew(ComboDisplayTextBlock,STextBlock)
+			.Text(FText::FromString(TEXT("List Assets Option")))
+		];
 
 	return ConstructedComboBox;
 }
@@ -132,6 +136,13 @@ TSharedRef<SWidget> SAdvanceDeletionTab::OnGenerateComboContent(TSharedPtr<FStri
 	.Text(FText::FromString(*SourceItem.Get()));
 	
 	return ConstructedComboText;
+}
+
+void SAdvanceDeletionTab::OnComboSelectionChanged(TSharedPtr<FString> SelectedOption, ESelectInfo::Type InSelectInfo)
+{
+	DebugHeader::Print(*SelectedOption.Get(),FColor::Cyan);
+
+	ComboDisplayTextBlock->SetText(FText::FromString(*SelectedOption.Get()));
 }
 
 #pragma endregion

@@ -34,6 +34,10 @@ private:
 
 	TSharedRef<SWidget> OnGenerateComboContent(TSharedPtr<FString> SourceItem);
 
+	void OnComboSelectionChanged (TSharedPtr<FString> SelectedOption, ESelectInfo::Type InSelectInfo);
+
+	TSharedPtr<STextBlock> ComboDisplayTextBlock;
+
 #pragma endregion 
 
 #pragma region RowWidgetForAssetListView
