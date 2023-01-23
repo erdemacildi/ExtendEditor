@@ -9,17 +9,20 @@
 #include "DebugHeader.h"
 
 #define ListAll TEXT("List All Avaible Assets")
+#define ListUnused TEXT("List Unused Assets")
 
 void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 {
 	bCanSupportFocus = true;
 
 	StoredAssetsData = InArgs._AssetsDataToStore;
+	DisplayAssetsData = StoredAssetsData;
 	
 	CheckBoxesArray.Empty();
 	AssetsDataToDeleteArray.Empty();
 
 	ComboBoxSourceItems.Add(MakeShared<FString>(ListAll));
+	ComboBoxSourceItems.Add(MakeShared<FString>(ListUnused));
 
 	FSlateFontInfo TitleTextFont = FCoreStyle::Get().GetFontStyle(FName("EmbossedText"));
 	TitleTextFont.Size = 24;
@@ -95,7 +98,7 @@ TSharedRef<SListView<TSharedPtr<FAssetData>>> SAdvanceDeletionTab::ConstructAsse
 {
 	ConstructedAssetListView = SNew(SListView<TSharedPtr<FAssetData>>)
 				.ItemHeight(24.f)
-				.ListItemsSource(&StoredAssetsData)
+				.ListItemsSource(&DisplayAssetsData)
 				.OnGenerateRow(this,
 					&SAdvanceDeletionTab::OnGenerateRowForList);
 
@@ -143,6 +146,18 @@ void SAdvanceDeletionTab::OnComboSelectionChanged(TSharedPtr<FString> SelectedOp
 	DebugHeader::Print(*SelectedOption.Get(),FColor::Cyan);
 
 	ComboDisplayTextBlock->SetText(FText::FromString(*SelectedOption.Get()));
+
+	//Pass data for our module to filter based on the selected option
+	if (*SelectedOption.Get()==ListAll)
+	{
+		//List all stored asset data
+	}
+	else if (*SelectedOption.Get()==ListUnused)
+	{
+		//List all unused assets
+	}
+	
+	
 }
 
 #pragma endregion
