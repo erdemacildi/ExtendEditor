@@ -6,6 +6,6 @@
 /NAME:"UnrealEditor-RiderLogging.dll"
 /IGNORE:4221
 /NODEFAULTLIB
-"D:\Program Files\Epic Games\UE_5.0\Projects\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLogging\Module.RiderLogging.cpp.obj"
-"D:\Program Files\Epic Games\UE_5.0\Projects\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLogging\Default.rc2.res"
-/OUT:"D:\Program Files\Epic Games\UE_5.0\Projects\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLogging\UnrealEditor-RiderLogging.lib"
+"C:\Users\capoom\Desktop\EA\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLogging\Module.RiderLogging.cpp.obj"
+"C:\Users\capoom\Desktop\EA\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLogging\Default.rc2.res"
+/OUT:"C:\Users\capoom\Desktop\EA\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderLogging\UnrealEditor-RiderLogging.lib"
