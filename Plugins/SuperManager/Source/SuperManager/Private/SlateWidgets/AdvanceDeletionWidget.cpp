@@ -21,18 +21,14 @@ void SAdvanceDeletionTab::Construct(const FArguments& InArgs)
 	
 	CheckBoxesArray.Empty();
 	AssetsDataToDeleteArray.Empty();
+	ComboBoxSourceItems.Empty();
 
 	ComboBoxSourceItems.Add(MakeShared<FString>(ListAll));
 	ComboBoxSourceItems.Add(MakeShared<FString>(ListUnused));
 	ComboBoxSourceItems.Add(MakeShared<FString>(ListSameName));
 
-	FSlateFontInfo TitleTextFont = FCoreStyle::Get().GetFontStyle(FName("EmbossedText"));
-	TitleTextFont.Size = 24;
-
-	/*FSlateFontInfo TitleTextFont = GetEmbossedTextFont();
-	TitleTextFont.Size = 30;*/
-	/*FSlateFontInfo TitleTextFont3 = FCoreStyle::Get().GetFontStyle(FName("EmbossedText"));
-	TitleTextFont3.Size = 45;*/
+	FSlateFontInfo TitleTextFont = GetEmbossedTextFont();
+	TitleTextFont.Size = 30;
 
 	ChildSlot
 	[   //Main Vertical Box
@@ -168,7 +164,8 @@ void SAdvanceDeletionTab::OnComboSelectionChanged(TSharedPtr<FString> SelectedOp
 	else if (*SelectedOption.Get()==ListSameName)
 	{
 		//List out all assets with same name
-		
+		SuperManagerModule.ListSameNameAssetsForAssetList(StoredAssetsData,DisplayAssetsData);
+		RefreshAssetListView();
 	}
 	
 }
@@ -301,6 +298,11 @@ FReply SAdvanceDeletionTab::OnDeleteButtonClicked(TSharedPtr<FAssetData> Clicked
 		if(StoredAssetsData.Contains(ClickedAssetData))
 		{
 			StoredAssetsData.Remove(ClickedAssetData);
+		}
+
+		if (DisplayAssetsData.Contains(ClickedAssetData))
+		{
+			DisplayAssetsData.Remove(ClickedAssetData);
 		}
 		//Refresh the list
 		RefreshAssetListView();
