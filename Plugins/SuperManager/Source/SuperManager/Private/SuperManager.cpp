@@ -9,12 +9,14 @@
 #include "AssetRegistry/AssetRegistryModule.h"
 #include "AssetToolsModule.h"
 #include "SlateWidgets/AdvanceDeletionWidget.h"
+#include "CustomStyle/SuperManagerStyle.h"
 
 #define LOCTEXT_NAMESPACE "FSuperManagerModule"
 
 void FSuperManagerModule::StartupModule()
 {
 	// This code will execute after your module is loaded into memory; the exact timing is specified in the .uplugin file per-module
+	FSuperManagerStyle::InitializeIcons();
 	InitCBMenuExtention();
 
 	RegisterAdvanceDeletionTab();
@@ -74,25 +76,25 @@ void FSuperManagerModule::AddCBMenuEntry(FMenuBuilder& MenuBuilder)
 	MenuBuilder.AddMenuEntry(
 		FText::FromString(TEXT("Delete Unused Assets")), //Title text for menu entry
 		FText::FromString(TEXT("Safely delete all unused assets under folders")), //Tooltip text
-		FSlateIcon(), //Custom icon
+		FSlateIcon(FSuperManagerStyle::GetStyleSetName(), "ContentBrowser.DeleteUnusedAssets"), //Custom icon
 		FExecuteAction::CreateRaw(this,&FSuperManagerModule::OnDeleteUnusedAssetButtonClicked)); //The actual function to execute
 
 	MenuBuilder.AddMenuEntry(
 		FText::FromString(TEXT("Delete Empty Folders")), //Title text for menu entry
 		FText::FromString(TEXT("Safely delete all empty folders")), //Tooltip text
-		FSlateIcon(), //Custom icon
+		FSlateIcon(FSuperManagerStyle::GetStyleSetName(), "ContentBrowser.DeleteEmptyFolders"), //Custom icon
 		FExecuteAction::CreateRaw(this,&FSuperManagerModule::OnDeleteEmptyFoldersButtonClicked)); //The actual function to execute
 
 	MenuBuilder.AddMenuEntry(
 		FText::FromString(TEXT("Delete Empty Folders and Unused Assets")), //Title text for menu entry
 		FText::FromString(TEXT("Safely delete all empty folders and unused assets")), //Tooltip text
-		FSlateIcon(), //Custom icon
+		FSlateIcon(FSuperManagerStyle::GetStyleSetName(), "ContentBrowser.DeleteEmptyFoldersAndUnusedAsset"), //Custom icon
 		FExecuteAction::CreateRaw(this,&FSuperManagerModule::OnDeleteEmptyFoldersAndUnusedAssetsButtonClicked)); //The actual function to execute
 
 	MenuBuilder.AddMenuEntry(
 		FText::FromString(TEXT("Advance Deltion")), //Title text for menu entry
 		FText::FromString(TEXT("List assets by specific condition in a tab for deleting")), //Tooltip text
-		FSlateIcon(), //Custom icon
+		FSlateIcon(FSuperManagerStyle::GetStyleSetName(), "ContentBrowser.AdvanceDeletion"), //Custom icon
 		FExecuteAction::CreateRaw(this,&FSuperManagerModule::OnAdvanceDeletionButtonClicked)); //The actual function to execute
 	
 }
@@ -259,7 +261,9 @@ void FSuperManagerModule::FixUpRedirectors()
 void FSuperManagerModule::RegisterAdvanceDeletionTab()
 {
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(FName("AdvanceDeletion"),
-		FOnSpawnTab::CreateRaw(this,&FSuperManagerModule::OnSpawnAdvanceDeletionTab)).SetDisplayName(FText::FromString(TEXT("Advance Deletion")));
+		FOnSpawnTab::CreateRaw(this,&FSuperManagerModule::OnSpawnAdvanceDeletionTab))
+		.SetDisplayName(FText::FromString(TEXT("Advance Deletion")))
+		.SetIcon(FSlateIcon(FSuperManagerStyle::GetStyleSetName(), "ContentBrowser.AdvanceDeletion"));
 }
 
 TSharedRef<SDockTab> FSuperManagerModule::OnSpawnAdvanceDeletionTab(const FSpawnTabArgs &SpawnTabArgs)
@@ -267,6 +271,7 @@ TSharedRef<SDockTab> FSuperManagerModule::OnSpawnAdvanceDeletionTab(const FSpawn
 	return SNew(SDockTab).TabRole(ETabRole::NomadTab)[
 		SNew(SAdvanceDeletionTab)
 		.AssetsDataToStore(GetAllAssetDataUnderSelectedFolder())
+		.CurrentSelectedFolder(FolderPathsSelected[0])
 		];
 }
 
@@ -339,12 +344,53 @@ void FSuperManagerModule::ListUnusedAssetsForAssetList(const TArray<TSharedPtr<F
 	}
 }
 
+void FSuperManagerModule::ListSameNameAssetsForAssetList(const TArray<TSharedPtr<FAssetData>>& AssetsDataToFilter,
+	TArray<TSharedPtr<FAssetData>>& OutSameNameAssetsData)
+{
+	OutSameNameAssetsData.Empty();
+
+	//Multimap for supporting finding assets with same name
+	TMultiMap<FString, TSharedPtr<FAssetData>> AssetsInfoMultiMap;
+
+	for (const TSharedPtr<FAssetData>& DataSharedPtr : AssetsDataToFilter)
+	{
+		AssetsInfoMultiMap.Emplace(DataSharedPtr->AssetName.ToString(),DataSharedPtr);
+	}
+
+	for (const TSharedPtr<FAssetData>& DataSharedPtr : AssetsDataToFilter)
+	{
+		TArray<TSharedPtr<FAssetData>> OutAssetsData;
+		AssetsInfoMultiMap.MultiFind(DataSharedPtr->AssetName.ToString(),OutAssetsData);
+
+		if (OutAssetsData.Num()<=1) continue;
+
+		for (const TSharedPtr<FAssetData>& SameNameData : OutAssetsData)
+		{
+			if (SameNameData.IsValid())
+			{
+				OutSameNameAssetsData.AddUnique(SameNameData);
+			}
+		}
+	}
+}
+
+void FSuperManagerModule::SyncCBToClickedAssetForAssetList(const FString& AssetPathToSync)
+{
+	TArray<FString> AssetsPathToSync;
+	AssetsPathToSync.Add(AssetPathToSync);
+
+	UEditorAssetLibrary::SyncBrowserToObjects(AssetsPathToSync);
+}
+
 #pragma endregion 
 
 void FSuperManagerModule::ShutdownModule()
 {
 	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
 	// we call this function before unloading the module.
+	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(FName("AdvanceDeletion"));
+
+	FSuperManagerStyle::ShutDown();
 }
 
 #undef LOCTEXT_NAMESPACE

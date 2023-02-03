@@ -1,4 +1,4 @@
-C:\Users\capoom\Desktop\EA\ExtendEditor\Plugins\Developer\RiderLink\Source\RiderShaderInfo\RiderShaderInfo.cpp
+"D:\Projects\Github Projects\ExtendEditor\Plugins\Developer\RiderLink\Source\RiderShaderInfo\RiderShaderInfo.cpp"
 /I .
 /I Runtime
 /I Runtime\TraceLog\Public
@@ -7,17 +7,17 @@ C:\Users\capoom\Desktop\EA\ExtendEditor\Plugins\Developer\RiderLink\Source\Rider
 /I Runtime\Json\Public
 /I Runtime\RenderCore\Public
 /I Runtime\RHI\Public
-/I C:\Users\capoom\Desktop\EA\ExtendEditor\Plugins\Developer\RiderLink\Source
+/I "D:\Projects\Github Projects\ExtendEditor\Plugins\Developer\RiderLink\Source"
 /I ThirdParty\mimalloc\include
-/I "C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\INCLUDE"
+/I "D:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.34.31933\INCLUDE"
 /I "C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"
-/I "C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\ucrt"
-/I "C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\shared"
-/I "C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um"
-/I "C:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\winrt"
-/FI"C:\Users\capoom\Desktop\EA\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\Definitions.h"
-/Fo"C:\Users\capoom\Desktop\EA\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\RiderShaderInfo.cpp.obj"
-/sourceDependencies C:\Users\capoom\Desktop\EA\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\RiderShaderInfo.cpp.json
+/I "D:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\ucrt"
+/I "D:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\shared"
+/I "D:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\um"
+/I "D:\Program Files (x86)\Windows Kits\10\include\10.0.22000.0\winrt"
+/FI"D:\Projects\Github Projects\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\Definitions.h"
+/Fo"D:\Projects\Github Projects\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\RiderShaderInfo.cpp.obj"
+/sourceDependencies "D:\Projects\Github Projects\ExtendEditor\Plugins\Developer\RiderLink\Intermediate\Build\Win64\UnrealEditor\Development\RiderShaderInfo\RiderShaderInfo.cpp.json"
 /Zc:inline
 /nologo
 /Oi
